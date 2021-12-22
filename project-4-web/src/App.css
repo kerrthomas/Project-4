@@ -1,38 +1,40 @@
-.App {
+body{
   text-align: center;
+  background-image: linear-gradient(rgba(0,35,220, 0.5), rgb(50,5,200, 0.8), rgb(100,0,155, 0.8));
+  height: 100vh;
+  overflow-y: hidden;
+  font-family:Georgia, 'Times New Roman', Times, serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ADJUST THE BELOW CLASS TO ACCOUNT FOR RESPONSIVE DESIGN */
+.flex-box{
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-flow: row nowrap;
+}
+
+.stock-container {
+  width: 60%;
+  border-right: 1px solid black;
+  border-top: 1px solid black;
+}
+
+.portfolio-container {
+  width: 40%;
+  border-left: 1px solid black;
+  border-top: 1px solid black;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 20%);
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  grid-template-rows: repeat(1, auto);
 }
 
-.App-link {
-  color: #61dafb;
+.grid-item {
+  border: 2px solid black;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.grid-header {
+  background-color: lightgray;
 }

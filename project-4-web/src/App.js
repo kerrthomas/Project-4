@@ -1,24 +1,29 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from "react";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Stock Manager</h1>
+      <hr />
+      <div className='flex-box'>
+        <div className='stock-container'>
+          <strong>Stock</strong>
+          <h2>Which Stock Would You Like To See?</h2>
+          <input type="text" />
+          <button type="submit">Search</button>
+        </div>
+        <div className='portfolio-container'>
+          <strong>Portfolio</strong>
+          <div className='grid-container'>
+            <div className='grid-header grid-item'>Stock</div>
+            <div className='grid-header grid-item'>Quantity</div>
+            <div className='grid-header grid-item'>Value</div>
+            <div className='grid-header grid-item'>Buy/Sell</div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
