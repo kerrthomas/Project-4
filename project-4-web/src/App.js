@@ -1,5 +1,20 @@
 import './App.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const Api = (props) => {
+  const [search, setSearch] = useState("");
+  const [stock, setStock] = useState({});
+  const [quantity, setQuantity ] = useState(0);
+};
+
+const handleSearch = (event) => {
+  let newSearch = event.target.value;
+  setSearch(newSearch);
+};
+
+const handleQuantity = (event) => {
+  setQuantity(event.target.value);
+}
 
 function App() {
   return (
