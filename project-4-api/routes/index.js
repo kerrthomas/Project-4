@@ -21,16 +21,12 @@ router.get('/test', async(req, res) => {
   });
 });
 
-router.get('/api/search/:symbol', async (req, res) => {
-  const error = "Data not found."
-  try {
-    const data = await yahoo.getCurrentData(req.params.symbol);
-    res.send({data});
-  } catch (e) {
-    console.log(e)
-    res.send({error});
-  }
-});
+router.get('/yahoo/:stock', async(req, res) => {
+  let api = await yahoo.getCurrentData(req.params.stock);
+  console.log(api);
+  res.send({price: api.price});
+})
+
 /*
 let stockChart = new chart.Chart(thisChart, {
 <canvas id="myChart" width="400" height="400"></canvas>
