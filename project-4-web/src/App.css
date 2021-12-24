@@ -6,7 +6,6 @@ body{
   font-family:Georgia, 'Times New Roman', Times, serif;
 }
 
-/* ADJUST THE BELOW CLASS TO ACCOUNT FOR RESPONSIVE DESIGN */
 .flex-box{
   display: flex;
   flex-flow: row nowrap;
@@ -36,5 +35,11 @@ body{
 }
 
 .grid-header {
-  background-color: lightgray;
+  background-image: linear-gradient(rgb(255, 255, 255), rgba(224, 224, 224, 0.8), rgba(168, 168, 168, 0.8));
+}
+
+.searchbtn {
+  background-image: linear-gradient(rgb(255, 255, 255), rgba(224, 224, 224, 0.8), rgba(168, 168, 168, 0.8));
+  border: solid rgb(24, 23, 23) 3px;
+  border-radius: 5px;
 }
