@@ -41,6 +41,7 @@ body{
 
 .searchbtn {
   background-image: linear-gradient(rgb(255, 255, 255), rgba(224, 224, 224, 0.8), rgba(168, 168, 168, 0.8));
+  margin-left: 10px;
   border: solid rgb(24, 23, 23) 3px;
-  border-radius: 5px;
+  border-radius: 3px;
 }

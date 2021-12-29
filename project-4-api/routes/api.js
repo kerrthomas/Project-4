@@ -20,6 +20,16 @@ router.get('/test', async(req, res) => {
   });
 });
 
+router.post('/login', async(req, res) => {
+  db.connect();
+  db.query("SELECT * FROM user WHERE username = ?",[req.body], async(err, results) => {
+    if (err) throw err;
+    if(results) {
+      console.log("Login successful!");
+    }
+  });
+});
+
 router.get('/yahoo/:stock', async(req, res) => {
   try {
     let api = await yahoo.getCurrentData(req.params.stock);

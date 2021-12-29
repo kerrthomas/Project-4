@@ -1,10 +1,5 @@
 import './App.css';
-import { useState, useEffect } from "react";
-
-// 1. Display the results of the search from the fetchSearch function
-// 2. Allow the user to buy a quantity of the stock they searched for (For now, don't worry about balance).
-/* 3. When pressing the buy button, add it to the portfolio. Add it as a new row. Do you remember the function
-      we can use with arrays in JSX so that it goes through each item in the array? */
+import { useState, useEffect } from 'react';
 
 function App() {
   const [stock, setStock] = useState("");
@@ -21,7 +16,7 @@ function App() {
   const fetchSearch = async (event) => {
     console.log("fetchSearch is working.");
     let search = await fetch(`http://localhost:3000/api/yahoo/${stock}`); // Update this route
-    search = await search.json(); // Now that you have the json of the response, do something with it
+    search = await search.json();
     if (!search.error) {
       setResults(search.api);
     }
@@ -35,7 +30,7 @@ function App() {
     if (quantity <= 0) {
       alert("Quantity cannot be zero or a negative number.");
     } else {
-        let stocksBought = parseFloat(results.price * quantity).toFixed(2);
+      let stocksBought = parseFloat(results.price * quantity).toFixed(2);
       if (money >= stocksBought) {
         console.log(stock);
         console.log(quantity);
@@ -60,6 +55,16 @@ function App() {
 
   };
 
+  const resetPortfolio = async (event) => {
+    if (portfolio.length === 0) {
+      alert("Your portfolio is empty!");
+    }
+    else {
+      setMoney(1000);
+      setPortfolio([]);
+    }
+  };
+
   console.log(results.api);
   console.log(results);
 
@@ -82,6 +87,7 @@ function App() {
         </div>
         <div className='portfolio-container'>
           <strong>Portfolio</strong>
+          <div><button style={{ backgroundColor: "red", color: "white", margin: "10px", size: "150px" }} onClick={resetPortfolio}>RESET</button></div>
           <div className='grid-container'>
             <div className='grid-header grid-item'>Stock</div>
             <div className='grid-header grid-item'>Quantity</div>
