@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 function App() {
   const [stock, setStock] = useState("");
   const [results, setResults] = useState({});
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const [portfolio, setPortfolio] = useState([]);
   const [money, setMoney] = useState(1000);
 
@@ -32,17 +32,32 @@ function App() {
 
   const buyStock = async (event) => {
     console.log("The Buy button was clicked.");
-    let stocksBought = parseFloat(results.price * quantity).toFixed(2);
-    if (money >= stocksBought) {
-      setMoney(money - stocksBought);
-      console.log(stock);
-      console.log(quantity);
-      console.log(stocksBought);
-      setPortfolio([...portfolio, [stock, quantity, stocksBought]]);
+    if (quantity <= 0) {
+      alert("Quantity cannot be zero or a negative number.");
+    } else {
+        let stocksBought = parseFloat(results.price * quantity).toFixed(2);
+      if (money >= stocksBought) {
+        console.log(stock);
+        console.log(quantity);
+        console.log(stocksBought);
+        let check = false;
+        portfolio.map((item) => {
+          if (item[0] === stock) {
+            check = true;
+            alert("You already bought this stock.");
+          }
+        });
+        console.log(check);
+        if (!check) {
+          setMoney(parseFloat(money - stocksBought).toFixed(2));
+          setPortfolio([...portfolio, [stock, quantity, stocksBought]]);
+        }
+      }
+      else {
+        alert("You do not have enough money to invest in this stock.");
+      }
     }
-    else {
-      alert("You do not have enough money to invest in this stock.");
-    }
+
   };
 
   console.log(results.api);
@@ -51,6 +66,7 @@ function App() {
   return (
     <>
       <h1>Stock Manager</h1>
+      <h2>Balance: {money}</h2>
       <div className='flex-box'>
         <div className='stock-container'>
           <strong>Stock</strong>
@@ -61,7 +77,7 @@ function App() {
             <>
               <div>{results.price}</div>
               <div><button style={{ backgroundColor: "green" }} onClick={buyStock}>Buy</button></div>
-              <div><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "250px", marginTop: "10px" }} placeholder="How many stock would you like to buy?" min="1" max="10" /></div>
+              <div><label>How much would you like to buy?: </label><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "50px", marginTop: "10px" }} min="1" max="10" /></div>
             </>)}
         </div>
         <div className='portfolio-container'>
