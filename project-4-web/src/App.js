@@ -1,7 +1,25 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Login from './Login.js';
+import Register from './Register';
 
 function App() {
+
+  return (
+    <BrowserRouter>
+      <h1>Stock Manager</h1>
+      <Routes>
+        <Route exact path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+      </Routes>
+    </BrowserRouter>
+  );
+
+};
+
+function Home() {
   const [stock, setStock] = useState("");
   const [results, setResults] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -64,14 +82,11 @@ function App() {
       setPortfolio([]);
     }
   };
-
-  console.log(results.api);
-  console.log(results);
-
   return (
     <>
-      <h1>Stock Manager</h1>
       <h2>Balance: {money}</h2>
+      <Link to='/login'><button>Login</button></Link>
+      <Link to='/register'><button>Register</button></Link>
       <div className='flex-box'>
         <div className='stock-container'>
           <strong>Stock</strong>
@@ -99,16 +114,14 @@ function App() {
                   <div className='grid-item'>{newStock[0]}</div>
                   <div className='grid-item'>{newStock[1]}</div>
                   <div className='grid-item'>{newStock[2]}</div>
-                  <div className='grid-item'><button style={{ backgroundColor: "green" }}>Buy</button><button style={{ backgroundColor: "red" }}>Sell</button></div>
+                  <div className='grid-item'><button style={{ backgroundColor: "green" }}>Buy</button><button style={{ backgroundColor: "yellow" }}>Sell</button></div>
                 </>
               )
             })}
-
           </div>
         </div>
       </div>
     </>
-  );
+  )
 };
-
 export default App;
