@@ -2,7 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login.js';
-import Register from './Register';
+import Register from './Register.js';
 
 function App() {
 
@@ -33,7 +33,7 @@ function Home() {
 
   const fetchSearch = async (event) => {
     console.log("fetchSearch is working.");
-    let search = await fetch(`http://localhost:3000/api/yahoo/${stock}`); // Update this route
+    let search = await fetch(`http://localhost:3000/api/yahoo/${stock}`);
     search = await search.json();
     if (!search.error) {
       setResults(search.api);
@@ -124,4 +124,4 @@ function Home() {
     </>
   )
 };
-export default App;
+export {App, Home};

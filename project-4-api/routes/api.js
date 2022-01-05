@@ -2,41 +2,59 @@ var express = require('express');
 var router = express.Router();
 var yahoo = require('yahoo-stock-prices');
 const chart = require('chart.js');
-const db = require('../lib/database.js');
+const mysql = require('../lib/database');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   console.log("Connected to the API route!");
 });
 
-router.get('/test', async(req, res) => {
+router.get('/test', async (req, res) => {
   console.log("Trying to retrieve from database...")
-  db.connect();
-  db.query("SELECT * FROM stockmanager", async(err, results) => {
-    if (err) throw err;
-    if(results) {
-      console.log("Query successful!");
-    }
-  });
+  mysql.db.getConnection((error, connection) => {
+    connection.query("SELECT * FROM stockmanager", async (err, results) => {
+      if (err) throw err;
+      if (results) {
+        console.log("Query successful!");
+      }
+    });
+    mysql.db.releaseConnection(connection);
+  })
 });
 
-router.post('/login', async(req, res) => {
-  db.connect();
-  db.query("SELECT * FROM user WHERE username = ?",[req.body], async(err, results) => {
-    if (err) throw err;
-    if(results) {
-      console.log("Login successful!");
-    }
-  });
+router.post('/login', async (req, res) => {
+  mysql.db.getConnection((error, connection) => {
+    if (error) throw error;
+    connection.query("SELECT * FROM user WHERE username = ?", [req.body.username], async (error, results) => {
+      if (error) throw error;
+      console.log(results);
+      if (results.length > 0) {
+        console.log("Login successful!");
+        res.send({ results });
+      } else {
+        res.json({ error: "Invalid Username or Password." });
+      }
+    });
+    mysql.db.releaseConnection(connection);
+  })
 });
 
-router.get('/yahoo/:stock', async(req, res) => {
+router.put.('./register'), async (req, res) => {
+  mysql.db.getConnection((error, connection) => {
+    if (error) throw error;
+    connection.query("INSERT INTO user(username, password) VALUES (", [req.body.username], ", ", [req.body.password], async (error, results) => {
+      if (error) throw error;
+      console.log(results);
+  })
+});
+
+router.get('/yahoo/:stock', async (req, res) => {
   try {
     let api = await yahoo.getCurrentData(req.params.stock);
     console.log(api);
-    res.send({api});
-  } catch(error) {
-    res.send({error})
+    res.send({ api });
+  } catch (error) {
+    res.send({ error })
   }
 })
 
