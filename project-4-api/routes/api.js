@@ -39,14 +39,28 @@ router.post('/login', async (req, res) => {
   })
 });
 
-router.put.('./register'), async (req, res) => {
+router.post('./register', async (req, res) => {
   mysql.db.getConnection((error, connection) => {
     if (error) throw error;
-    connection.query("INSERT INTO user(username, password) VALUES (", [req.body.username], ", ", [req.body.password], async (error, results) => {
-      if (error) throw error;
-      console.log(results);
+    connection.query("SELECT * FROM user WHERE username = ?", [req.body.username], async (error, results) => {
+      if (results.length > 0) {
+        res.json({ error: "Username is already taken!"});
+      } else {
+        connection.query("INSERT INTO user(username, password) VALUES(?, ?)", [req.body.username, req.body.password], async (error, results) => {
+          if (error) throw error;
+          console.log(results);
+          if (results) {
+            console.log("Registry successful!");
+            res.json({ success: "Registry successful!" });
+          } else {
+            res.json({ error: "There was an error" });
+          }
+        })
+      }
+    });
+    mysql.db.releaseConnection(connection);
   })
-});
+})
 
 router.get('/yahoo/:stock', async (req, res) => {
   try {
@@ -56,7 +70,7 @@ router.get('/yahoo/:stock', async (req, res) => {
   } catch (error) {
     res.send({ error })
   }
-})
+});
 
 /*
 let stockChart = new chart.Chart(thisChart, {

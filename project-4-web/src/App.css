@@ -43,6 +43,10 @@ button {
   margin: 10px;
 }
 
+input {
+  margin: 10px;
+}
+
 .searchbtn {
   background-image: linear-gradient(rgb(255, 255, 255), rgba(224, 224, 224, 0.8), rgba(168, 168, 168, 0.8));
   border: solid rgb(24, 23, 23) 3px;
