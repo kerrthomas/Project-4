@@ -9,6 +9,22 @@ function Register() {
 
     const handleSubmit = async (event) => {
         console.log("The submit button was clicked");
+        let fetchData = await fetch('http://localhost:3000/api/register', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        fetchData = await fetchData.json();
+        if(!fetchData.error) {
+            alert("Success!")
+        } else {
+            alert("Username was already taken!")
+        }
     }
     return (
         <div style={{ backgroundColor: "white" }} padding="50px">

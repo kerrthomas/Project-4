@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
   })
 });
 
-router.post('./register', async (req, res) => {
+router.post('/register', async (req, res) => {
   mysql.db.getConnection((error, connection) => {
     if (error) throw error;
     connection.query("SELECT * FROM user WHERE username = ?", [req.body.username], async (error, results) => {
