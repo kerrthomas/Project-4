@@ -35,7 +35,7 @@ function Register() {
                 <div><label>Enter a Password: </label><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required /></div>
                 <div><button type="submit">Login</button></div>
             </form>
-            <Link to="/login">Have an account? Click here to login!</Link>
+            <Link to="/login">Already have an account? Click here to login!</Link>
         </div>
     )
 };

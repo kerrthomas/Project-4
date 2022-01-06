@@ -82,6 +82,36 @@ function Home() {
       setPortfolio([]);
     }
   };
+
+  const buyPortfolio = async (event) => {
+    let Bought = parseFloat(results.price * quantity).toFixed(2);
+    if (Bought >= money) {
+      let check = false;
+      portfolio.map((item) => {
+        if (item[0].quantity = 0) {
+          check = true;
+          alert("You don't have any shares in this stock.");
+        }
+      })
+      if (!check) {
+        setQuantity(quantity + 1);
+        setMoney(parseFloat(money - results.price).toFixed(2));
+        setPortfolio([stock, quantity, Bought]);
+      }
+    }
+  };
+
+  const sell = async (event) => {
+    let Sold = parseFloat(results.price * quantity).toFixed(2);
+    setQuantity(quantity - 1);
+    setMoney(parseFloat(money + results.price).toFixed(2));
+    if (quantity = 0) {
+      setPortfolio.slice(portfolio);
+    } else {
+      setPortfolio([stock, quantity, Sold]);
+    }
+  };
+
   return (
     <>
       <h2>Balance: {money}</h2>
@@ -114,7 +144,7 @@ function Home() {
                   <div className='grid-item'>{newStock[0]}</div>
                   <div className='grid-item'>{newStock[1]}</div>
                   <div className='grid-item'>{newStock[2]}</div>
-                  <div className='grid-item'><button style={{ backgroundColor: "green" }}>Buy</button><button style={{ backgroundColor: "yellow" }}>Sell</button></div>
+                  <div className='grid-item'><button style={{ backgroundColor: "green" }} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} onClick={sell}>Sell</button></div>
                 </>
               )
             })}
