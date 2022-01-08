@@ -59,7 +59,7 @@ function Home() {
             check = true;
             alert("You already bought this stock.");
           }
-        });
+        }); // Closes map function
         console.log(check);
         if (!check) {
           setMoney(parseFloat(money - stocksBought).toFixed(2));
@@ -70,7 +70,6 @@ function Home() {
         alert("You do not have enough money to invest in this stock.");
       }
     }
-
   };
 
   const resetPortfolio = async (event) => {
@@ -84,31 +83,43 @@ function Home() {
   };
 
   const buyPortfolio = async (event) => {
-    let Bought = parseFloat(results.price * quantity).toFixed(2);
-    if (Bought >= money) {
-      let check = false;
-      portfolio.map((item) => {
-        if (item[0].quantity = 0) {
-          check = true;
-          alert("You don't have any shares in this stock.");
-        }
-      })
-      if (!check) {
-        setQuantity(quantity + 1);
-        setMoney(parseFloat(money - results.price).toFixed(2));
-        setPortfolio([stock, quantity, Bought]);
-      }
+    console.log("Buy portfolio button was clicked!");
+    let newQuantity = parseInt(portfolio[event.target.id][1]) + 1;
+    let newPortfolio = [];
+    portfolio.map((item) => {
+      return newPortfolio.push(item);
+    })
+    let bought = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * newQuantity);
+    let newMoney = parseFloat(parseFloat(money) - (portfolio[event.target.id][2] / portfolio[event.target.id][1]));
+    if (newMoney >= 0) {
+      newPortfolio[event.target.id][2] = bought.toFixed(2);
+      newPortfolio[event.target.id][1] = newQuantity;
+      setPortfolio(newPortfolio);
+      setMoney(newMoney.toFixed(2));
+    } else {
+      alert("You don't have enough money to invest in another stock.");
     }
   };
 
-  const sell = async (event) => {
-    let Sold = parseFloat(results.price * quantity).toFixed(2);
-    setQuantity(quantity - 1);
-    setMoney(parseFloat(money + results.price).toFixed(2));
-    if (quantity = 0) {
-      setPortfolio.slice(portfolio);
-    } else {
-      setPortfolio([stock, quantity, Sold]);
+  const sellPortfolio = async (event) => {
+    console.log("Sell portfolio button was clicked!");
+    let newQuantity = parseInt(portfolio[event.target.id][1]) - 1;
+    let newPortfolio = [];
+    portfolio.map((item) => {
+      return newPortfolio.push(item);
+    })
+    let sold = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * newQuantity);
+    let newMoney = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) + parseFloat(money));
+    if (newQuantity > 0) {
+      newPortfolio[event.target.id][2] = sold.toFixed(2);
+      newPortfolio[event.target.id][1] = newQuantity;
+      setPortfolio(newPortfolio);
+      setMoney(newMoney.toFixed(2));
+    }
+    else {
+      newPortfolio.splice(event.target.id, 1);
+      setPortfolio(newPortfolio);
+      setMoney(newMoney.toFixed(2));
     }
   };
 
@@ -138,13 +149,13 @@ function Home() {
             <div className='grid-header grid-item'>Quantity</div>
             <div className='grid-header grid-item'>Value</div>
             <div className='grid-header grid-item'>Buy/Sell</div>
-            {portfolio.map((newStock) => {
+            {portfolio.map((newStock, idx) => {
               return (
                 <>
                   <div className='grid-item'>{newStock[0]}</div>
                   <div className='grid-item'>{newStock[1]}</div>
                   <div className='grid-item'>{newStock[2]}</div>
-                  <div className='grid-item'><button style={{ backgroundColor: "green" }} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} onClick={sell}>Sell</button></div>
+                  <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
                 </>
               )
             })}
@@ -154,4 +165,4 @@ function Home() {
     </>
   )
 };
-export {App, Home};
+export { App, Home };
