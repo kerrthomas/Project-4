@@ -1,26 +1,27 @@
 body{
   text-align: center;
-  background-image: linear-gradient(rgba(0,35,220, 0.5), rgb(50,5,200, 0.8), rgb(100,0,155, 0.8));
+  background-color: darkcyan;
   height: 100vh;
   overflow-y: hidden;
-  font-family:Georgia, 'Times New Roman', Times, serif;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .flex-box{
   display: flex;
   flex-flow: row nowrap;
+  width: 100%;
 }
 
 .stock-container {
-  width: 60%;
-  border-right: 1px solid black;
-  border-top: 1px solid black;
+  width: 50%;
+  background-image: linear-gradient(rgba(2, 24, 92, 0.5), rgba(28, 0, 104, 0.8), rgba(85, 1, 134, 0.8));
+  padding-bottom: 100%;
 }
 
 .portfolio-container {
-  width: 40%;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
+  width: 50%;
+  background-image: linear-gradient(rgba(100, 3, 3, 1), rgba(122, 15, 15, 0.5)rgba(184, 25, 5, 0.8));
+  padding-bottom: 100%;
 }
 
 .grid-container {

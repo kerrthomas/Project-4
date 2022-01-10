@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Home } from './App';
-import Login from './Login';
+import Home from './App.js';
 
 function Register() {
     const [username, setUsername] = useState("");
@@ -22,6 +21,7 @@ function Register() {
         fetchData = await fetchData.json();
         if(!fetchData.error) {
             alert("Success!")
+            return <Home />
         } else {
             alert("Username was already taken!")
         }

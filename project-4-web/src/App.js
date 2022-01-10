@@ -123,6 +123,17 @@ function Home() {
     }
   };
 
+  const transactionLog = async (event) => {
+    console.log("Transaction log is working.");
+    let logData = results;
+    if (money++) {
+      logData += stock + " sold for $" + results.price;
+    } else {
+      logData += stock + " bought for $" + results.price;
+    }
+    return logData;
+  };
+
   return (
     <>
       <h2>Balance: {money}</h2>
@@ -143,23 +154,25 @@ function Home() {
         </div>
         <div className='portfolio-container'>
           <strong>Portfolio</strong>
-          <div><button style={{ backgroundColor: "red", color: "white", margin: "10px", size: "150px" }} onClick={resetPortfolio}>RESET</button></div>
-          <div className='grid-container'>
-            <div className='grid-header grid-item'>Stock</div>
-            <div className='grid-header grid-item'>Quantity</div>
-            <div className='grid-header grid-item'>Value</div>
-            <div className='grid-header grid-item'>Buy/Sell</div>
-            {portfolio.map((newStock, idx) => {
-              return (
-                <>
+          {portfolio.map((newStock, idx) => {
+            return (
+              <>
+                <div><button style={{ backgroundColor: "red", color: "white", margin: "10px", size: "150px" }} onClick={resetPortfolio}>RESET</button></div>
+                <div className='grid-container'>
+                  <div className='grid-header grid-item'>Stock</div>
+                  <div className='grid-header grid-item'>Quantity</div>
+                  <div className='grid-header grid-item'>Value</div>
+                  <div className='grid-header grid-item'>Buy/Sell</div>
                   <div className='grid-item'>{newStock[0]}</div>
                   <div className='grid-item'>{newStock[1]}</div>
                   <div className='grid-item'>{newStock[2]}</div>
                   <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
-                </>
-              )
-            })}
-          </div>
+                  <div style={{ marginTop: "10px" }}>Transaction Log:
+                  <textarea style={{width: "762px"}} onChange={transactionLog} readOnly></textarea></div>
+                </div>
+              </>
+            )
+          })}
         </div>
       </div>
     </>

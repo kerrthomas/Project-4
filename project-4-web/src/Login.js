@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Home } from './App';
-import Register from './Register';
+import Home from './App.js';
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -22,9 +21,10 @@ function Login() {
         fetchData = await fetchData.json();
         if(!fetchData.error) {
             alert("Success!!")
+            return <Home />
         }
         else {
-            alert("There is no data.")
+            alert("User not found.")
         }
     }
     return (
