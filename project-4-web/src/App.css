@@ -2,7 +2,7 @@ body{
   text-align: center;
   background-color: darkcyan;
   height: 100vh;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
@@ -20,7 +20,7 @@ body{
 
 .portfolio-container {
   width: 50%;
-  background-image: linear-gradient(rgba(100, 3, 3, 1), rgba(122, 15, 15, 0.5)rgba(184, 25, 5, 0.8));
+  background-image: linear-gradient(rgba(100, 3, 3, 1), rgba(122, 15, 15, 0.5), rgba(184, 25, 5, 0.8));
   padding-bottom: 100%;
 }
 

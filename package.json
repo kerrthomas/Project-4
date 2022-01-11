@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "react-popup-alert": "^2.0.0"
+    "chart.js": "^3.7.0",
+    "moment": "^2.29.1",
+    "react-popup-alert": "^2.0.0",
+    "yahoo-stock-prices": "^1.1.0"
   }
 }

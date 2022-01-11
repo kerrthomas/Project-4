@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import Home from './App.js';
+import { App, Home } from './App.js';
 
 function Register() {
     const [username, setUsername] = useState("");

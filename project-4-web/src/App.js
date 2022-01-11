@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
+import canvasItem from '../../Canvas.js';
 
 function App() {
 
@@ -16,7 +17,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-
 };
 
 function Home() {
@@ -25,6 +25,7 @@ function Home() {
   const [quantity, setQuantity] = useState(1);
   const [portfolio, setPortfolio] = useState([]);
   const [money, setMoney] = useState(1000);
+  const [transactions, setTransactions] = useState([]);
 
   const handleSearch = (event) => {
     console.log("handleSearch is working.");
@@ -37,6 +38,7 @@ function Home() {
     search = await search.json();
     if (!search.error) {
       setResults(search.api);
+      let myChart = await fetch(`http://localhost:3000/api/chart/${stock}`);
     }
     else {
       alert('Data not found.');
@@ -47,7 +49,8 @@ function Home() {
     console.log("The Buy button was clicked.");
     if (quantity <= 0) {
       alert("Quantity cannot be zero or a negative number.");
-    } else {
+    }
+    else {
       let stocksBought = parseFloat(results.price * quantity).toFixed(2);
       if (money >= stocksBought) {
         console.log(stock);
@@ -60,14 +63,13 @@ function Home() {
             alert("You already bought this stock.");
           }
         }); // Closes map function
-        console.log(check);
         if (!check) {
           setMoney(parseFloat(money - stocksBought).toFixed(2));
           setPortfolio([...portfolio, [stock, quantity, stocksBought]]);
         }
-      }
-      else {
-        alert("You do not have enough money to invest in this stock.");
+        else {
+          alert("You do not have enough money to invest in this stock.");
+        }
       }
     }
   };
@@ -124,14 +126,9 @@ function Home() {
   };
 
   const transactionLog = async (event) => {
-    console.log("Transaction log is working.");
-    let logData = results;
-    if (money++) {
-      logData += stock + " sold for $" + results.price;
-    } else {
-      logData += stock + " bought for $" + results.price;
-    }
-    return logData;
+    transactions.map((item) => {
+      return portfolio;
+    })
   };
 
   return (
@@ -147,6 +144,7 @@ function Home() {
           <button className='searchbtn' type="submit" onClick={fetchSearch}>Search</button>
           {(results && results.price) && (
             <>
+              <div id={myChart}></div>
               <div>{results.price}</div>
               <div><button style={{ backgroundColor: "green" }} onClick={buyStock}>Buy</button></div>
               <div><label>How much would you like to buy?: </label><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "50px", marginTop: "10px" }} min="1" max="10" /></div>
@@ -167,8 +165,9 @@ function Home() {
                   <div className='grid-item'>{newStock[1]}</div>
                   <div className='grid-item'>{newStock[2]}</div>
                   <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
-                  <div style={{ marginTop: "10px" }}>Transaction Log:
-                  <textarea style={{width: "762px"}} onChange={transactionLog} readOnly></textarea></div>
+                  <div style={{ marginTop: "10px" }}><strong>Transaction Log:</strong>
+                    <textarea style={{ width: "762px" }} onChange={transactionLog} readOnly></textarea>
+                  </div>
                 </div>
               </>
             )
