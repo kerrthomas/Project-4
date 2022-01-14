@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var yahoo = require('yahoo-stock-prices');
 const chart = require('chart.js');
+const canvas = require('canvas');
 const mysql = require('../lib/database');
-var moment = require('moment');
-import canvasItem from '../../Canvas.js';
+const canvasItem = require('../canvas.js');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -75,88 +75,58 @@ router.get('/yahoo/:stock', async (req, res) => {
 });
 
 router.get('/chart/:stock'), async (req, res) => {
-  try {
-    const ctx = canvasItem;
-    const myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-    res.send({ canvasItem });
-  } catch (error) {
-    res.send({ error })
-  }
-};
-
-/*
-let stockChart = new chart.Chart(thisChart, {
-<canvas id="myChart" width="400" height="400"></canvas>
-<script>
-const ctx = document.getElementById('myChart').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'bar',
+  let ctx = canvasItem.canvasItem;
+  let myChart = new chart.Chart(ctx, {
+    type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
+      labels: ["$50, $100, $150, $200"],
+      datasets: [{
+        label: "Testing chart",
+        data: [30, 23, 57, 50],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 99, 132, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 99, 132, 1)'
+        ],
+        borderWidth: 1
+      }]
     },
     options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
+      scales: {
+        y: {
+          beginAtZero: true
         }
+      }
     }
-});
-</script>
-});
-*/
+  });
+  let sendChart = new canvas.Image();
+  sendChart = ctx.toDataURL();
+  res.send({ sendChart });
+  myChart.destroy();
+};
+
+router.post('/transactions'), async (req, res) => {
+  mysql.db.getConnection((error, connection) => {
+    connection.query("SELECT * FROM transactionlog WHERE userid = ?", [req.body.userid], async (error, results) => {
+      connection.query("INSERT INTO transactionlog(logs) VALUES (?)", [req.body.logs], async (err, results) => {
+        if (err) throw err;
+        if (results) {
+          console.log("Transaction successfully logged!");
+        }
+      });
+      mysql.db.releaseConnection(connection);
+    })
+  });
+}
 module.exports = router;

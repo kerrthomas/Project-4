@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
-import canvasItem from '../../Canvas.js';
 
 function App() {
 
@@ -38,7 +37,7 @@ function Home() {
     search = await search.json();
     if (!search.error) {
       setResults(search.api);
-      let myChart = await fetch(`http://localhost:3000/api/chart/${stock}`);
+      console.log(`http://localhost:3000/api/chart/${stock}`)
     }
     else {
       alert('Data not found.');
@@ -125,9 +124,20 @@ function Home() {
     }
   };
 
+  const handleChart = async() => {
+    const myChart = await fetch(`http://localhost:3000/api/chart/${stock}`);
+    myChart = await myChart.json();
+    console.log(myChart)
+    document.getElementById('myChart').setAttribute("src", myChart.sendChart);
+  };
+
   const transactionLog = async (event) => {
     transactions.map((item) => {
-      return portfolio;
+      if (item[2]++) {
+        return { stock } + " -$" + [event.target.id][2] + "<br/>";
+      } else {
+        return { stock } + " +$" + [event.target.id][2] + "<br/>";
+      }
     })
   };
 
@@ -143,12 +153,14 @@ function Home() {
           <input type="text" onChange={handleSearch} value={stock} placeholder="Search for a stock" />
           <button className='searchbtn' type="submit" onClick={fetchSearch}>Search</button>
           {(results && results.price) && (
-            <>
-              <div id={myChart}></div>
+            <>                      
+              <div><img id="myChart" style={{width: "100%", maxWidth: "700px"}}></img></div>
               <div>{results.price}</div>
+              <button onClick={handleChart}>Show the chart!</button>
               <div><button style={{ backgroundColor: "green" }} onClick={buyStock}>Buy</button></div>
               <div><label>How much would you like to buy?: </label><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "50px", marginTop: "10px" }} min="1" max="10" /></div>
-            </>)}
+            </>
+          )}
         </div>
         <div className='portfolio-container'>
           <strong>Portfolio</strong>
