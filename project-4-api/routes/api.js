@@ -74,32 +74,34 @@ router.get('/yahoo/:stock', async (req, res) => {
   }
 });
 
-router.get('/chart/:stock'), async (req, res) => {
+router.get('/chart/:stock', async (req, res) => {
+  let chartData = await yahoo.getHistoricalPrices(1, 1, 2021, 12, 31, 2021, req.params.stock, '1mo');
+  console.log(chartData);
   let ctx = canvasItem.canvasItem;
   let myChart = new chart.Chart(ctx, {
     type: 'line',
     data: {
-      labels: ["$50, $100, $150, $200"],
+      labels: chartData.map(item => item.date),
       datasets: [{
-        label: "Testing chart",
-        data: [30, 23, 57, 50],
+        label: [req.params.stock],
+        data: chartData.map(item => item.open),
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(255, 99, 132, 0.2)'
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)'
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)'
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)',
+          'rgba(34, 111, 199, 0.828)'
         ],
-        borderWidth: 1
+        borderWidth: 2
       }]
     },
     options: {
@@ -114,7 +116,7 @@ router.get('/chart/:stock'), async (req, res) => {
   sendChart = ctx.toDataURL();
   res.send({ sendChart });
   myChart.destroy();
-};
+});
 
 router.post('/transactions'), async (req, res) => {
   mysql.db.getConnection((error, connection) => {

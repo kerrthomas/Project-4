@@ -38,6 +38,9 @@ function Home() {
     if (!search.error) {
       setResults(search.api);
       console.log(`http://localhost:3000/api/chart/${stock}`)
+      let myChart = await fetch(`http://localhost:3000/api/chart/${stock}`);
+      myChart = await myChart.json();
+      document.getElementById('myChart').setAttribute("src", myChart.sendChart);
     }
     else {
       alert('Data not found.');
@@ -124,13 +127,6 @@ function Home() {
     }
   };
 
-  const handleChart = async() => {
-    const myChart = await fetch(`http://localhost:3000/api/chart/${stock}`);
-    myChart = await myChart.json();
-    console.log(myChart)
-    document.getElementById('myChart').setAttribute("src", myChart.sendChart);
-  };
-
   const transactionLog = async (event) => {
     transactions.map((item) => {
       if (item[2]++) {
@@ -154,9 +150,8 @@ function Home() {
           <button className='searchbtn' type="submit" onClick={fetchSearch}>Search</button>
           {(results && results.price) && (
             <>                      
-              <div><img id="myChart" style={{width: "100%", maxWidth: "700px"}}></img></div>
+              <div style={{backgroundColor: "white"}}><img id="myChart" style={{width: "50%", maxWidth: "500px"}}></img></div>
               <div>{results.price}</div>
-              <button onClick={handleChart}>Show the chart!</button>
               <div><button style={{ backgroundColor: "green" }} onClick={buyStock}>Buy</button></div>
               <div><label>How much would you like to buy?: </label><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "50px", marginTop: "10px" }} min="1" max="10" /></div>
             </>
