@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { App, Home } from './App.js';
+import './user.css';
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
+    
     const handleSubmit = async (event) => {
+        event.preventDefault();
         console.log("The submit button was clicked");
         let fetchData = await fetch('http://localhost:3000/api/login', {
             method: 'POST',
@@ -15,20 +16,20 @@ function Login() {
             },
             body: JSON.stringify({
                 username: username,
-                password: password 
+                password: password
             })
         });
         fetchData = await fetchData.json();
         if(!fetchData.error) {
-            alert("Success!!")
-            return <Home />
+            alert("Login Successful!")
+            window.location.pathname = '/';
         }
         else {
-            alert("User not found.")
+            alert("Invalid Username or Password.")
         }
     }
     return (
-        <div style={{ backgroundColor: "white" }} padding="50px">
+        <div className='form'>
             <Link to="/"><button>Go Back</button></Link>
             <h1>Please enter your username and password.</h1>
             <form onSubmit={handleSubmit}>

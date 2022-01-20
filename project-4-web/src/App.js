@@ -184,4 +184,4 @@ function Home() {
     </>
   )
 };
-export { App, Home };
+export default App;

@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { App, Home } from './App.js';
+import './user.css';
 
 function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async (event) => {
+        event.preventDefault();
         console.log("The submit button was clicked");
         let fetchData = await fetch('http://localhost:3000/api/register', {
             method: "POST",
@@ -20,20 +21,20 @@ function Register() {
         });
         fetchData = await fetchData.json();
         if(!fetchData.error) {
-            alert("Success!")
-            return <Home />
+            alert("Registry Successful!")
+            window.location.pathname = '/';
         } else {
             alert("Username was already taken!")
         }
     }
     return (
-        <div style={{ backgroundColor: "white" }} padding="50px">
+        <div className='form'>
             <Link to="/"><button>Go Back</button></Link>
             <h1>Please enter a username and password you would like to use.</h1>
             <form onSubmit={handleSubmit}>
                 <div><label>Enter a Username: </label><input type="text" value={username} onChange={(event) => setUsername(event.target.value)} required /></div>
                 <div><label>Enter a Password: </label><input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required /></div>
-                <div><button type="submit">Login</button></div>
+                <div><button type="submit">Register</button></div>
             </form>
             <Link to="/login">Already have an account? Click here to login!</Link>
         </div>
