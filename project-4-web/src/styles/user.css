@@ -1,0 +1,13 @@
+html {
+    overflow: hidden;
+}
+
+body {
+    text-align: center;
+}
+
+.form {
+    background-image: linear-gradient(rgb(224, 224, 224), rgba(184, 184, 184, 0.698), rgba(165, 165, 165, 0.5));
+    padding: 5px;
+    height: 100vh;
+}

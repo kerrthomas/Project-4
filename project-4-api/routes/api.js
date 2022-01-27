@@ -131,8 +131,10 @@ router.get('/chart/:stock', async (req, res) => {
 
 router.post('/transactions'), async (req, res) => {
   mysql.db.getConnection((error, connection) => {
-    connection.query("SELECT * FROM transactionlog WHERE userid = ?", [req.body.userid], async (error, results) => {
-      connection.query("UPDATE transactionlog SET logs = ?", [req.body.logs], async (err, results) => {
+    console.log(req.body)
+    connection.query("INSERT INTO transactionlog (logs) VALUES (?)", [req.body.transactionType], async (err, result) => {
+      console.log(result);
+      connection.query("SELECT * FROM transactionlog WHERE userid = ?", [req.body.userid], async (error, results) => {
           if (err) throw err;
           if (results) {
             console.log("Transaction successfully logged!");

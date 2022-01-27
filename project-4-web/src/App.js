@@ -1,5 +1,5 @@
-import './App.css';
-import { useState, useEffect } from 'react';
+import './styles/App.css';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
@@ -16,7 +16,7 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-};
+}
 
 function Home() {
   const [stock, setStock] = useState("");
@@ -24,7 +24,7 @@ function Home() {
   const [quantity, setQuantity] = useState(1);
   const [portfolio, setPortfolio] = useState([]);
   const [money, setMoney] = useState(1000);
-  const [transactions, setTransactions] = useState([]);
+  const [transactionType, setTransactionType] = useState([]);
 
   const handleSearch = (event) => {
     console.log("handleSearch is working.");
@@ -128,11 +128,13 @@ function Home() {
   };
 
   const transactionLog = async (event) => {
-    transactions.map((item) => {
+    portfolio.map((item) => {
       if (item[2]++) {
-        return { stock } + " -$" + [event.target.id][2] + "<br/>";
+        setTransactionType("Buy");
+        return <div style={{color: 'red'}}>{ stock } + " -$" + {[event.target.id][2]}</div>;
       } else {
-        return { stock } + " +$" + [event.target.id][2] + "<br/>";
+        setTransactionType("Sell");
+        return <div style={{color: 'green'}}>{ stock } + " +$" + {[event.target.id][2]}</div>;
       }
     })
   };
@@ -173,7 +175,7 @@ function Home() {
                   <div className='grid-item'>{newStock[2]}</div>
                   <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
                   <div style={{ marginTop: "10px" }}><strong>Transaction Log:</strong>
-                    <textarea style={{ width: "762px" }} onChange={transactionLog} readOnly></textarea>
+                    <textarea style={{ width: "762px" }} onChange={transactionLog} value={transactionType} readOnly></textarea>
                   </div>
                 </div>
               </>

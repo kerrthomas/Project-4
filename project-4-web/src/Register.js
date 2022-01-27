@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import './user.css';
+import './styles/user.css';
 
 function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,7 +21,7 @@ function Register() {
             })
         });
         fetchData = await fetchData.json();
-        if(!fetchData.error) {
+        if (!fetchData.error) {
             alert("Registry Successful!")
             window.location.pathname = '/';
         } else {
