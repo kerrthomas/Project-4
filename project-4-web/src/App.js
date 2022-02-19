@@ -1,5 +1,5 @@
 import './styles/App.css';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
@@ -23,8 +23,8 @@ function Home() {
   const [results, setResults] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [portfolio, setPortfolio] = useState([]);
-  const [money, setMoney] = useState(1000);
-  const [transactionType, setTransactionType] = useState([]);
+  const [money, setMoney] = useState(0);
+  const [transactions, setTransactions] = useState([]);
 
   const handleSearch = (event) => {
     console.log("handleSearch is working.");
@@ -68,6 +68,7 @@ function Home() {
         if (!check) {
           setMoney(parseFloat(money - stocksBought).toFixed(2));
           setPortfolio([...portfolio, [stock, quantity, stocksBought]]);
+          setTransactions("Buy");
         }
         else {
           alert("You do not have enough money to invest in this stock.");
@@ -100,6 +101,7 @@ function Home() {
       newPortfolio[event.target.id][1] = newQuantity;
       setPortfolio(newPortfolio);
       setMoney(newMoney.toFixed(2));
+      setTransactions("Buy"); 
     } else {
       alert("You don't have enough money to invest in another stock.");
     }
@@ -119,6 +121,7 @@ function Home() {
       newPortfolio[event.target.id][1] = newQuantity;
       setPortfolio(newPortfolio);
       setMoney(newMoney.toFixed(2));
+      setTransactions("Sell");
     }
     else {
       newPortfolio.splice(event.target.id, 1);
@@ -128,31 +131,44 @@ function Home() {
   };
 
   const transactionLog = async (event) => {
-    portfolio.map((item) => {
-      if (item[2]++) {
-        setTransactionType("Buy");
-        return <div style={{color: 'red'}}>{ stock } + " -$" + {[event.target.id][2]}</div>;
-      } else {
-        setTransactionType("Sell");
-        return <div style={{color: 'green'}}>{ stock } + " +$" + {[event.target.id][2]}</div>;
+    let fetchData = await fetch('http://localhost:3000/api/transactions');
+    // Come back to this later
+    transactions.map((item) => {
+      if (item.transactions === 'Buy') {
+        return <div style={{ color: 'red' }}>{item.transaction}</div>
+      }
+      else {
+        return <div style={{ color: 'green' }}>{item.transaction}</div>
       }
     })
   };
 
   return (
     <>
-      <h2>Balance: {money}</h2>
-      <Link to='/login'><button>Login</button></Link>
-      <Link to='/register'><button>Register</button></Link>
+      {sessionStorage.getItem("username") && (
+        <h2>Balance: ${money}</h2>
+      )}
+      {sessionStorage.getItem("username") && (
+        <div>
+          <div style={{ fontWeight: 'bold' }}>Welcome, {sessionStorage.getItem("username")}</div>
+          <button onClick={() => {sessionStorage.clear(); alert("You have logged out!"); window.location.reload();}} id="logoutbtn" type="button">Logout</button>
+        </div>
+      )}
+      {!sessionStorage.getItem("username") && (
+        <span>
+          <Link to='/login'><button className='userbuttons'>Login</button></Link>
+          <Link to='/register'><button className='userbuttons'>Register</button></Link>
+        </span>
+      )}
       <div className='flex-box'>
         <div className='stock-container'>
           <strong>Stock</strong>
           <h2>Which Stock Would You Like To See?</h2>
           <input type="text" onChange={handleSearch} value={stock} placeholder="Search for a stock" />
-          <button className='searchbtn' type="submit" onClick={fetchSearch}>Search</button>
+          <button id='searchbtn' type="submit" onClick={fetchSearch}>Search</button>
           {(results && results.price) && (
-            <>                      
-              <div style={{backgroundColor: "white"}}><img id="myChart" style={{width: "50%", maxWidth: "500px"}}></img></div>
+            <>
+              <div style={{ backgroundColor: "white" }}><img id="myChart" style={{ width: "50%", maxWidth: "500px" }}></img></div>
               <div>{results.price}</div>
               <div><button style={{ backgroundColor: "green" }} onClick={buyStock}>Buy</button></div>
               <div><label>How much would you like to buy?: </label><input type="number" onChange={(event) => setQuantity(event.target.value)} value={quantity} style={{ width: "50px", marginTop: "10px" }} min="1" max="10" /></div>
@@ -175,7 +191,7 @@ function Home() {
                   <div className='grid-item'>{newStock[2]}</div>
                   <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
                   <div style={{ marginTop: "10px" }}><strong>Transaction Log:</strong>
-                    <textarea style={{ width: "762px" }} onChange={transactionLog} value={transactionType} readOnly></textarea>
+                    <textarea style={{ width: "762px" }} onChange={transactionLog} value={transactions} readOnly></textarea>
                   </div>
                 </div>
               </>

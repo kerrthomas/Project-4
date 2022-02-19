@@ -6,8 +6,7 @@ const canvas = require('canvas');
 const mysql = require('../lib/database');
 const canvasItem = require('../canvas.js');
 const moment = require('moment');
-const CryptoJS = require("crypto-js");
-var key = "ASECRET";
+const bcrypt = require('bcrypt');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -33,9 +32,13 @@ router.post('/login', async (req, res) => {
     connection.query("SELECT * FROM user WHERE username = ?", [req.body.username], async (error, results) => {
       if (error) throw error;
       if (results.length > 0) {
-        if(CryptoJS.AES.decrypt(results[0].password, key) == req.body.password) {
+        let checkPassword = await bcrypt.compare(req.body.password.toString(), results[0].password.toString())
+        if(checkPassword) {
           console.log("Login successful!");
-          res.send({ results });
+          res.json({ success: "Login successful!" });
+        }
+        else {
+          res.json({ error: "Invalid Username or Password." });
         }
       } else {
         res.json({ error: "Invalid Username or Password." });
@@ -52,7 +55,7 @@ router.post('/register', async (req, res) => {
       if (results.length > 0) {
         res.json({ error: "Username is already taken!" });
       } else {
-        let cipher = CryptoJS.AES.encrypt(req.body.password, key);
+        let cipher = bcrypt.hashSync(req.body.password, 10);
         connection.query("INSERT INTO user(username, password) VALUES(?, ?)", [req.body.username, cipher], async (error, results) => {
           if (error) throw error;
           console.log(results);

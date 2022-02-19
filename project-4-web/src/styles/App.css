@@ -48,8 +48,29 @@ input {
   margin: 10px;
 }
 
-.searchbtn {
-  background-image: linear-gradient(rgb(255, 255, 255), rgba(224, 224, 224, 0.8), rgba(168, 168, 168, 0.8));
-  border: solid rgb(24, 23, 23) 3px;
-  border-radius: 3px;
+.userbuttons {
+  color: white;
+  font-weight: bold;
+  background-image: linear-gradient(rgb(16, 18, 105), rgb(15, 16, 92), rgb(14, 15, 85));
+  border: solid rgb(16, 18, 105) 1px;
+  border-radius: 5px;
+  padding: 3px 10px;
+}
+
+#logoutbtn {
+  color: white;
+  font-weight: bold;
+  background-image: linear-gradient(rgb(255, 67, 25), rgba(255, 45, 5, 0.8), rgba(255, 25, 0, 0.8));
+  border: solid rgb(255, 67, 25) 1px;
+  border-radius: 5px;
+  padding: 3px 10px;
+}
+
+#searchbtn {
+  color: white;
+  font-weight: bold;
+  background-image: linear-gradient(rgb(107, 110, 255), rgba(98, 87, 255, 0.8), rgba(20, 55, 255, 0.8));
+  border: solid rgb(107, 110, 255) 1px;
+  border-radius: 5px;
+  padding: 3px 10px;
 }

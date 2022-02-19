@@ -22,15 +22,17 @@ function Login() {
         fetchData = await fetchData.json();
         if(!fetchData.error) {
             alert("Login Successful!")
-            window.location.pathname = '/';
+            sessionStorage.setItem('username', username);
+            window.location.replace('/')
         }
         else {
-            alert("Invalid Username or Password.")
+            alert("Inavlid Login. Please try again");
         }
     }
+
     return (
         <div className='form'>
-            <Link to="/"><button>Go Back</button></Link>
+            <Link to="/"><button className='userbuttons'>Go Back</button></Link>
             <h1>Please enter your username and password.</h1>
             <form onSubmit={handleSubmit}>
                 <div><label>Username: </label><input type="text" value={username} onChange={(event) => setUsername(event.target.value)} required /></div>
