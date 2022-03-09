@@ -23,7 +23,7 @@ function Register() {
         fetchData = await fetchData.json();
         if (!fetchData.error) {
             alert("Registry Successful!")
-            window.location.pathname = '/';
+            window.location.replace('/');
         } else {
             alert("Username was already taken!")
         }

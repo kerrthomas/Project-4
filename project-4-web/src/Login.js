@@ -22,6 +22,8 @@ function Login() {
         fetchData = await fetchData.json();
         if(!fetchData.error) {
             alert("Login Successful!")
+            sessionStorage.setItem('userid', fetchData.results[0].userid);
+            sessionStorage.setItem('balance', fetchData.results[0].balance);
             sessionStorage.setItem('username', username);
             window.location.replace('/')
         }

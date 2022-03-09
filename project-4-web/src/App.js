@@ -23,8 +23,47 @@ function Home() {
   const [results, setResults] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [portfolio, setPortfolio] = useState([]);
-  const [money, setMoney] = useState(0);
+  const [money, setMoney] = useState(1000);
   const [transactions, setTransactions] = useState([]);
+  const [resetted, setResetted] = useState(false);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (sessionStorage.length > 0) {
+        let data = await fetch(`http://localhost:3000/api/portfolio/${sessionStorage.getItem("userid")}`);
+        data = await data.json();
+        if (!data.error) {
+          setPortfolio(data.results[0].portfoliodata == null ? [] : data.results[0].portfoliodata);
+          data = await fetch(`http://localhost:3000/api/user/${sessionStorage.getItem("userid")}`);
+          data = await data.json();
+          if (!data.error) {
+            setMoney(data.results[0].balance);
+            data = await fetch(`http://localhost:3000/api/transactions/${sessionStorage.getItem("userid")}`);
+            data = await data.json();
+            if (!data.error) {
+              if (data.results[0].log !== null) {
+                setTransactions(data.results[0].log);
+              }
+            }
+          }
+        }
+      }
+    }
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (transactions.length > 0) {
+      savePortfolio();
+    }
+  }, [transactions]);
+
+  useEffect(() => {
+    if (resetted == true) {
+      savePortfolio();
+      setResetted(false);
+    }
+  }, [resetted]);
 
   const handleSearch = (event) => {
     console.log("handleSearch is working.");
@@ -67,8 +106,8 @@ function Home() {
         }); // Closes map function
         if (!check) {
           setMoney(parseFloat(money - stocksBought).toFixed(2));
-          setPortfolio([...portfolio, [stock, quantity, stocksBought]]);
-          setTransactions("Buy");
+          setPortfolio([...portfolio, [stock, quantity, parseFloat(stocksBought)]]);
+          setTransactions([...transactions, `Bought ${quantity} stock(s) in ${stock}.`]);
         }
         else {
           alert("You do not have enough money to invest in this stock.");
@@ -78,30 +117,75 @@ function Home() {
   };
 
   const resetPortfolio = async (event) => {
-    if (portfolio.length === 0) {
+    if (transactions.length === 0) {
       alert("Your portfolio is empty!");
     }
     else {
       setMoney(1000);
       setPortfolio([]);
+      setTransactions([]);
+      setResetted(true);
     }
   };
+
+  const savePortfolio = async (event) => {
+    let data = await fetch(`http://localhost:3000/api/portfolio`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        portfoliodata: portfolio.length > 0 ? portfolio : null, userid: sessionStorage.getItem("userid")
+      })
+    });
+    data = await data.json();
+    if (!data.error) {
+      let data = await fetch(`http://localhost:3000/api/transactions`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          log: transactions, userid: sessionStorage.getItem("userid")
+        })
+      })
+      if (!data.error) {
+        let data = await fetch(`http://localhost:3000/api/balance`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            balance: money, userid: sessionStorage.getItem("userid")
+          })
+        })
+        if (!data.error) {
+        }
+        else {
+          alert("There was an error.");
+        }
+      }
+      else {
+        alert("There was an error.")
+      }
+    }
+  }
 
   const buyPortfolio = async (event) => {
     console.log("Buy portfolio button was clicked!");
     let newQuantity = parseInt(portfolio[event.target.id][1]) + 1;
     let newPortfolio = [];
     portfolio.map((item) => {
-      return newPortfolio.push(item);
+      newPortfolio.push(item);
     })
     let bought = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * newQuantity);
     let newMoney = parseFloat(parseFloat(money) - (portfolio[event.target.id][2] / portfolio[event.target.id][1]));
     if (newMoney >= 0) {
-      newPortfolio[event.target.id][2] = bought.toFixed(2);
+      newPortfolio[event.target.id][2] = parseFloat(bought.toFixed(2));
       newPortfolio[event.target.id][1] = newQuantity;
       setPortfolio(newPortfolio);
       setMoney(newMoney.toFixed(2));
-      setTransactions("Buy"); 
+      setTransactions([...transactions, `Bought 1 stock in ${portfolio[event.target.id][0]}.`]);
     } else {
       alert("You don't have enough money to invest in another stock.");
     }
@@ -112,35 +196,32 @@ function Home() {
     let newQuantity = parseInt(portfolio[event.target.id][1]) - 1;
     let newPortfolio = [];
     portfolio.map((item) => {
-      return newPortfolio.push(item);
+      newPortfolio.push(item);
     })
     let sold = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * newQuantity);
     let newMoney = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) + parseFloat(money));
     if (newQuantity > 0) {
-      newPortfolio[event.target.id][2] = sold.toFixed(2);
+      newPortfolio[event.target.id][2] = parseFloat(sold.toFixed(2));
       newPortfolio[event.target.id][1] = newQuantity;
       setPortfolio(newPortfolio);
       setMoney(newMoney.toFixed(2));
-      setTransactions("Sell");
+      setTransactions([...transactions, `Sold 1 stock in ${portfolio[event.target.id][0]}.`]);
     }
     else {
       newPortfolio.splice(event.target.id, 1);
       setPortfolio(newPortfolio);
       setMoney(newMoney.toFixed(2));
+      setTransactions([...transactions, `Sold 1 stock in ${portfolio[event.target.id][0]}.`]);
     }
   };
 
+  console.error('Transaction Log: ', transactions)
+
   const transactionLog = async (event) => {
-    let fetchData = await fetch('http://localhost:3000/api/transactions');
-    // Come back to this later
-    transactions.map((item) => {
-      if (item.transactions === 'Buy') {
-        return <div style={{ color: 'red' }}>{item.transaction}</div>
-      }
-      else {
-        return <div style={{ color: 'green' }}>{item.transaction}</div>
-      }
-    })
+    let buyQuantity = parseInt(portfolio[event.target.id][1]) + 1;
+    let sellQuantity = parseInt(portfolio[event.target.id][1]) - 1;
+    let buyLog = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * buyQuantity);
+    let sellLog = parseFloat((portfolio[event.target.id][2] / portfolio[event.target.id][1]) * sellQuantity);
   };
 
   return (
@@ -151,7 +232,7 @@ function Home() {
       {sessionStorage.getItem("username") && (
         <div>
           <div style={{ fontWeight: 'bold' }}>Welcome, {sessionStorage.getItem("username")}</div>
-          <button onClick={() => {sessionStorage.clear(); alert("You have logged out!"); window.location.reload();}} id="logoutbtn" type="button">Logout</button>
+          <button onClick={() => { sessionStorage.clear(); alert("You have logged out!"); window.location.reload(); }} id="logoutbtn" type="button">Logout</button>
         </div>
       )}
       {!sessionStorage.getItem("username") && (
@@ -177,26 +258,33 @@ function Home() {
         </div>
         <div className='portfolio-container'>
           <strong>Portfolio</strong>
-          {portfolio.map((newStock, idx) => {
-            return (
-              <>
-                <div><button style={{ backgroundColor: "red", color: "white", margin: "10px", size: "150px" }} onClick={resetPortfolio}>RESET</button></div>
-                <div className='grid-container'>
-                  <div className='grid-header grid-item'>Stock</div>
-                  <div className='grid-header grid-item'>Quantity</div>
-                  <div className='grid-header grid-item'>Value</div>
-                  <div className='grid-header grid-item'>Buy/Sell</div>
-                  <div className='grid-item'>{newStock[0]}</div>
-                  <div className='grid-item'>{newStock[1]}</div>
-                  <div className='grid-item'>{newStock[2]}</div>
+          <div>
+            <button style={{ backgroundColor: "red", color: "white", margin: "10px", size: "150px" }} onClick={resetPortfolio}>RESET</button>
+          </div>
+          <div className='grid-container'>
+            <div className='grid-header grid-item'>Stock</div>
+            <div className='grid-header grid-item'>Quantity</div>
+            <div className='grid-header grid-item'>Value</div>
+            <div className='grid-header grid-item'>Buy/Sell</div>
+            {portfolio.map((item, idx) => {
+              return (
+                <>
+                  <div className='grid-item'>{item[0]}</div>
+                  <div className='grid-item'>{item[1]}</div>
+                  <div className='grid-item'>{item[2]}</div>
                   <div className='grid-item'><button style={{ backgroundColor: "green" }} id={idx} onClick={buyPortfolio}>Buy</button><button style={{ backgroundColor: "yellow" }} id={idx} onClick={sellPortfolio}>Sell</button></div>
-                  <div style={{ marginTop: "10px" }}><strong>Transaction Log:</strong>
-                    <textarea style={{ width: "762px" }} onChange={transactionLog} value={transactions} readOnly></textarea>
-                  </div>
-                </div>
-              </>
-            )
-          })}
+                </>
+              )
+            })}
+          </div>
+          {transactions.length > 0 && (
+            <div style={{ marginTop: '5px', overflowY: "auto" }}><strong>Transaction Log:</strong><br />
+              <textarea cols={100} rows={25} value={transactions.map((item) => {
+                return item + '\n'
+              })} readOnly>
+              </textarea>
+            </div>
+          )}
         </div>
       </div>
     </>
